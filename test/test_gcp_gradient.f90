@@ -64,6 +64,8 @@ subroutine test_numgrad(error, mol, method)
    real(wp) :: energy, er, el
    real(wp), allocatable :: gradient(:, :), numgrad(:, :)
    real(wp) :: gradlatt(3, 3)
+   real(wp) :: global_scaling = 1
+   type(params) :: custom_param
    logical :: pbc
    character(len=20) :: method_str
    logical, parameter :: dohess = .false.
@@ -86,18 +88,18 @@ subroutine test_numgrad(error, mol, method)
          mol%xyz(ic, iat) = mol%xyz(ic, iat) + step
          call gcp_call(mol%nat, mol%xyz, mol%lattice, mol%num(mol%id), &
             & er, gradient, gradlatt, .false., dohess, pbc, method_str, &
-            & echo, parfile)
+            & echo, parfile,global_scaling, custom_param)
          mol%xyz(ic, iat) = mol%xyz(ic, iat) - 2*step
          call gcp_call(mol%nat, mol%xyz, mol%lattice, mol%num(mol%id), &
             & el, gradient, gradlatt, .false., dohess, pbc, method_str, &
-            & echo, parfile)
+            & echo, parfile,global_scaling,custom_param)
          mol%xyz(ic, iat) = mol%xyz(ic, iat) + step
          numgrad(ic, iat) = 0.5_wp*(er - el)/step
       end do
    end do
 
    call gcp_call(mol%nat, mol%xyz, mol%lattice, mol%num(mol%id), &
-      & energy, gradient, gradlatt, .true., dohess, pbc, method_str, echo, parfile)
+      & energy, gradient, gradlatt, .true., dohess, pbc, method_str, echo, parfile, global_scaling,custom_param)
 
    if (any(abs(gradient(:, :mat)-numgrad(:, :mat)) > thr)) then
       call test_failed(error, "Numerical and analytical gradient do not match")

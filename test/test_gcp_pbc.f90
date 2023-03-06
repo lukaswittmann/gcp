@@ -67,6 +67,8 @@ subroutine test_generic(error, mol, method, energy_ref)
    real(wp) :: energy
    real(wp), allocatable :: gradient(:, :)
    real(wp) :: gradlatt(3, 3)
+   real(wp) :: global_scaling = 1
+   type(params) :: custom_param
    logical :: pbc
    character(len=20) :: method_str
    logical, parameter :: dograd = .false.
@@ -80,7 +82,7 @@ subroutine test_generic(error, mol, method, energy_ref)
    allocate(gradient(3, mol%nat))
 
    call gcp_call(mol%nat, mol%xyz, mol%lattice, mol%num(mol%id), &
-      & energy, gradient, gradlatt, dograd, dohess, pbc, method_str, echo, parfile)
+      & energy, gradient, gradlatt, dograd, dohess, pbc, method_str, echo, parfile,global_scaling, custom_param)
 
    call check(error, energy_ref, energy, thr=thr)
    if (allocated(error)) then

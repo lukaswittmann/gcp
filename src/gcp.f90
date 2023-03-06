@@ -16,9 +16,20 @@
 
 module gcp
    use gcp_version, only : get_gcp_version
+   use mctc_env, only : wp
+   TYPE params
+   logical :: alpha = .false.
+   logical :: beta = .false.
+   logical :: eta = .false.
+   logical :: sigma = .false.
+   real(wp) :: alpha_input
+   real(wp) :: beta_input
+   real(wp) :: eta_input
+   real(wp) :: sigma_input
+END TYPE params
 contains
 !subroutine for interfacing with orca/turbomole/crystal
-subroutine gcp_call(n,xyz,lat,iz,gcp_e,gcp_g,gcp_glat,dograd,dohess,pbc,method,echo,parfile)
+subroutine gcp_call(n,xyz,lat,iz,gcp_e,gcp_g,gcp_glat,dograd,dohess,pbc,method,echo,parfile,global_scaling,custom_param)
 implicit none
 integer n   !number of atoms
 real*8 xyz(3,n) !xyzcoordinates
@@ -26,8 +37,8 @@ real*8 lat(3,3) !lattice matrix
 integer iz(n) !element number
 real*8 gcp_g(3,n) !xyz gradient
 real*8 gcp_glat(3,3)
-logical dograd,dohess,echo !calculate gradient, calculate hessian, print informations
-logical pbc !periodic system
+logical dograd,dohess,echo !calculate gradient, calculate hessian, print information
+logical pbc  !periodic system
 character*20 method !method string
 integer max_elem,max_para
 integer nn,nb,i,zz,j
@@ -63,7 +74,8 @@ character*80 args(90), comment, line
 real*8 er,el,ebas,gbas(3,n)
 integer nargs, ios
 real*8 dmp_scal,dmp_exp,rscal,qscal
-
+real*8 global_scaling ! global scaling parameter
+type(params) :: custom_param
 
 !default no srvb
 srb=.false.
@@ -109,7 +121,7 @@ if(echo) write(*,*) ' Perform special SRB correction for B97-3c '
 srb=.true.
 rscal=10.00d0
 qscal=0.08d0
-case('r2scan3c','def2mtzvpp','mtzvpp')
+case('r2scan3c','def2mtzvpp','mtzvpp','stor2scan3c')
 damp=.true.
 case default
 end select
@@ -169,8 +181,9 @@ if(method.eq.''.or.method.eq.'file')then
       call readl(ftmp,xx,nn)
       parm=.true.
       damp=.true.
-      dmp_scal=xx(5)
-      dmp_exp=xx(6)
+      read(42,'(x,F8.4)',end=9) p(1:4), dmp_scal, dmp_exp
+      !dmp_scal=xx(5)
+      !dmp_exp=xx(6)
       do i=1,36
           read(42,'(x,I3,x,F9.6)',end=9) nbas(i), emiss(i)
        enddo
@@ -178,7 +191,7 @@ if(method.eq.''.or.method.eq.'file')then
 9   close(42)
      if(.not.parm) then
       if(echo) write(*,*) 'loading ',trim(basname),' params'
-      call setparam(emiss,nbas,p,basname)
+      call setparam(emiss,nbas,p,basname,global_scaling, custom_param)
      endif
   else
    write(*,'(a)') ''
@@ -190,7 +203,7 @@ method=trim(basname)
 !* built-in method *
 !*******************
 else
-    call setparam(emiss,nbas,p,method)
+    call setparam(emiss,nbas,p,method,global_scaling, custom_param)
 endif
 
 !open(unit=42,file='~/.gcppar')
@@ -890,23 +903,28 @@ end
 !*********************************
 !* Load all necessary parameters *
 !*********************************
-subroutine setparam(emiss,nbas,p,method)
+subroutine setparam(emiss,nbas,p,method,global_scaling, custom_param)
 implicit none
 integer, parameter :: mpar=86 ! maximal
 integer, parameter :: apar=36 ! actual
 integer nbas(mpar)
 character*(*) method
+real(8) global_scaling
 real(8) emiss(mpar),p(*)
 real(8) HFsv(apar),HFminis(apar),HF631gd(apar),HFsvp(apar),HFtz(apar),&
      HFvmb(apar),HFminisd(apar),oldHFsvp(apar),HFpobtz(apar),HFpobdzvp(apar),&
      HF2gcore(apar),HF2g(apar), HFdef1tzvp(apar),HFccdz(apar),HFaccdz(apar),&
-     HFdzp(apar),HFhsv(apar),HFdz(apar),HFmsvp(apar),HFdef2mtzvp(apar),HFdef2mtzvpp(apar) !SG
+     HFdzp(apar),HFhsv(apar),HFdz(apar),HFmsvp(apar),HFdef2mtzvp(apar),HFdef2mtzvpp(apar),& !SG
+     HFmtz2p(apar),HFstosz(apar),HFstodz(apar),HFstodzp(apar),HFstotzp(apar),HFstotz2p(apar), & ! TG
+     DFTstosz(apar),DFTstodz(apar),DFTstodzp(apar),DFTstotzp(apar),DFTstotz2p(apar) ! TG
 integer BASsv(apar),BASminis(apar),BAS631gd(apar),BAStz(apar),&
      BASsvp(apar),BASvmb(apar),BASminisd(apar),oldBASsvp(apar),BASpobtz(apar),BASpobdzvp(apar),&
      BAS2gcore(apar),BAS2g(apar),BASdef1tzvp(apar),BASccdz(apar),BASaccdz(apar),&
-     BASdzp(apar),BAShsv(apar),BASdz(apar),BASmsvp(apar),BASdef2mtzvp(apar),BASdef2mtzvpp(apar)
+     BASdzp(apar),BAShsv(apar),BASdz(apar),BASmsvp(apar),BASdef2mtzvp(apar),BASdef2mtzvpp(apar),&
+     BASmtz2p(apar),BASstosz(apar),BASstodz(apar),BASstodzp(apar),BASstotzp(apar),BASstotz2p(apar)
 real(8) HFlanl2(10)
 integer BASlanl2(10)
+type(params) :: custom_param
 
 ! ***************
 ! *  Emiss data *
@@ -1016,6 +1034,15 @@ data HFdef2mtzvpp /&    !SG
 10*0.3,&
 0.300000,0.300000,0.300000,0.300000,0.300000,0.000000/
 
+data HFmtz2p /&    !TG
+0.003308,0.313229,&
+0.007313,0.010125,0.002281,-0.115871,0.001520,0.155870,0.001461,0.147213,&
+0.019031,0.029710,0.010692,0.010814,0.006382,0.105131,0.003538,0.118457,&
+0.029270,0.040081,&
+0.018669,0.179879,0.024208,0.016573,0.024158,0.059907,0.060532,0.075696,0.015305,0.058416,&
+0.038461,0.014964,0.005114,0.007737,0.005242,0.100899/
+
+
 data HF2g / & !no ne, ar ecp
 0.0539181,0.161846,&
 0.1581960,0.214318,0.808955,0.470398,0.724457,1.260960,2.014430,0.000000,&
@@ -1074,6 +1101,88 @@ data HFmsvp / &     !H-Kr modified Ahlrichs DZ, supplemented by def2-SV(P)
 0.325990d0,0.305490d0,0.291720d0,0.293800d0,0.291790d0,0.296730d0,0.304600d0,0.242040d0,0.354190d0,0.350720d0,&
 0.350020d0,0.345780d0,0.349530d0,0.367310d0,0.382010d0,0.000000d0/
 
+! Parameters for STO Basis sets
+
+data HFstosz /&    !TG Emiss calculated with ADF: UHF, electric field x=y=z=0.03464, numericalquality good, SR-ZORA
+-0.0434089,0.0023089,&
+0.0579039,0.0427526,-0.0439299,-0.0757108,-0.0736433,-0.0429728,-0.0177184,0.0042649,&
+0.1010848,0.1056766,0.0267589,-0.0353704,-0.0622427,-0.0189027,0.0095351,0.0193435,&
+0.1669705,0.1566153,&
+0.1664995,0.1911876,0.0974888,-0.2699033,-0.1146109,-0.4569527,-0.6344323,-1.5820083,-1.5713192,-0.3501915,&
+0.1150561,0.0178359,-0.0249704,0.0119707,0.0213109,0.0310376/
+
+data HFstodz /&    !TG
+0.0093607,0.0023088,&
+0.0361458,0.0208530,0.0092659,0.0139135,0.0126852,0.0189638,0.0137918,0.0037357,&
+0.0546909,0.0377225,0.0606243,0.0441114,0.0265518,0.0371390,0.0245000,0.0174456,&
+0.0808685,0.0713838,&
+0.0548606,0.0800531,0.0636411,0.0432090,0.0582233,0.0551204,0.0495887,0.0571976,0.0415399,0.0458056,&
+0.1504233,0.0808101,0.0378476,0.0448328,0.0351078,0.0268742/
+
+data HFstodzp /&    !TG
+0.0039566,0.0001947,&
+0.0305316,0.0208311,0.0076362,0.0102537,0.0120572,0.0139784,0.0090227,0.0009798,&
+0.0488020,0.0372263,0.0583411,0.0375419,0.0240095,0.0296395,0.0142443,0.0096776,&
+0.0792699,0.0697403,&
+0.0519539,0.0778164,0.0606002,0.0434035,0.0570354,-0.0362389,0.0497209,0.0584956,0.0420202,0.0451900,&
+0.1399398,0.0660291,0.0238408,0.0290717,0.0181904,0.0092292/
+
+data HFstotzp /&    !TG
+0.0029221,-0.0000795,&
+0.0202494,0.0077034,0.0081670,0.0057794,0.0048204,0.0058710,0.0034708,0.0004043,&
+0.0475289,0.0351812,0.0269192,0.0325527,0.0187852,0.0268296,0.0124118,0.0083090,&
+0.0644026,0.0628725,&
+0.0519539,0.0778164,0.0606002,0.0434035,0.0570354,-0.0362389,0.0497209,0.0584956,0.0420202,0.0451900,&
+0.1157751,0.0532151,0.0194496,0.0186032,0.0166570,0.0066413/
+
+data HFstotz2p /&    !TG
+0.0029165,-0.0000823,&
+0.0202133,-0.0018519,0.0081419,0.0057491,0.0021976,0.0044736,0.0021201,0.0004039,&
+0.0474174,0.0073835,0.0269051,0.0324694,0.0187816,0.0246884,0.0100587,0.0083068,&
+0.0643847,0.0583760,&
+0.0490351,0.0730745,0.0582233,0.0432532,0.0568625,0.0514965,0.0484009,0.0570201,0.0418854,0.0451121,&
+0.1154039,0.0529726,0.0193831,0.0167769,0.0139420,0.0066098/
+
+data DFTstosz /&    !TG miss calculated with ADF: B3LYP, electric field x=y=z=0.03464, numericalquality good, SR-ZORA 
+-0.0113665,0.0026660,&
+0.0683017,0.0401104,0.0102166,-0.0119177,-0.0201201,-0.0042778,0.0022282,0.0051318,&
+0.1343419,0.0968792,0.0845913,0.0313889,0.0043033,0.0239358,0.0242564,0.0216626,&
+0.1796519,0.1409318,&
+0.1217334,0.1269712,0.0948666,-0.1419462,-0.0283857,-0.2302302,-0.3579484,-1.4825768,-1.7578742,-0.7176840,&
+-0.0180731,0.0662741,0.0247812,0.0367832,0.0325983,0.0334655/
+
+data DFTstodz /&    !TG
+0.0093162,0.0026660,&
+0.0346715,0.0192964,0.0135638,0.0094914,0.0072525,0.0110346,0.0073908,0.0046152,&
+0.0518193,0.0336938,0.0624868,0.0449500,0.0303137,0.0367279,0.0263306,0.0194235,&
+0.0774053,0.0634452,&
+0.0527587,0.0522277,0.0517458,0.0383033,0.0435989,0.0394430,0.0358548,0.0365700,0.0279951,0.0337063,&
+0.1436716,0.0842534,0.0463141,0.0466801,0.0356191,0.0289037/
+
+data DFTstodzp /&    !TG
+0.0038873,0.0005261,&
+0.0293341,0.0192938,0.0122723,0.0079023,0.0061804,0.0078524,0.0042586,0.0017842,&
+0.0464587,0.0333959,0.0656205,0.0408888,0.0260634,0.0311635,0.0189162,0.0116545,&
+0.0758225,0.0619550,&
+0.0497310,0.0499556,0.0485514,0.0371225,0.0420773,0.0380318,0.0349870,0.0351342,0.0279791,0.0332207,&
+0.1316237,0.0713193,0.0293429,0.0318912,0.0204859,0.0113897/
+
+data DFTstotzp /&    !TG
+0.0036475,-0.0000583,&
+0.0196565,0.0073679,0.0118616,0.0067644,0.0053939,0.0063385,0.0028701,0.0009491,&
+0.0448907,0.0315220,0.0260859,0.0341035,0.0214753,0.0293467,0.0177125,0.0100327,&
+0.0620367,0.0559428,&
+0.0497310,0.0499556,0.0485514,0.0371225,0.0420773,0.0380318,0.0349870,0.0351342,0.0279791,0.0332207,&
+0.1068538,0.0531209,0.0242357,0.0199181,0.0187078,0.0083061/
+
+data DFTstotz2p /&    !TG
+0.0036427,-0.0000619,&
+0.0196135,-0.0017033,0.0117996,0.0067051,0.0021295,0.0054886,0.0018322,0.0009487,&
+0.0448274,0.0066416,0.0260710,0.0340601,0.0214749,0.0280118,0.0161983,0.0100305,&
+0.0620257,0.0519982,&
+0.0488026,0.0487212,0.0919702,0.0369710,0.0419969,0.0374853,0.0343396,0.0343862,0.0277682,0.0332192,&
+0.1065123,0.0529470,0.0241429,0.0189448,0.0168824,0.0082769/
+
 
 ! *********************
 ! * nr. of basis fkt  *
@@ -1087,6 +1196,7 @@ data BAStz/       2*6,14,19,6*31,2*32,6*37,33,36,9*45,48,6*48/
 !data BASdef2mtzvp/2*6,14,19,6*24,2*32,6*37,33,36,9*45,48,6*48/   !def2-TZVP, no f for B-Ne
 data BASdef2mtzvp/2*3,8,11,3*19,24,2*19,2*14,6*22,18,28,10*31,6*36/   !def2-mTZVP
 data BASdef2mtzvpp/2*5,9,11,2*19,4*24,2*14,6*27,18,28,10*31,6*36/  !def2-mTZVPP
+data BASmtz2p/2*5,2*16,2*19,24,3*26,2*24,27,5*34,2*37,10*42,2*50,49,50,49,56/ !mTZ2P
 data BASvmb/2*1,2*2,6*4,2*1,6*4,2*0,16*0/ ! minimal basis set with ECPs
 data BASminisd/2*0,2*0,6*0,2*0,6*14,2*0,16*0/
 data BASlanl2/22, 22, 22, 22, 22, 22, 22, 22, 22, 18/ ! Sc-Zn LANL2DZ
@@ -1169,6 +1279,50 @@ data BASmsvp / &  ! modified Ahlrichs DZ, supplemented by def2-SV(P)
 24,24,&
 31,31,31,31,31,31,31,31,31,31,&
 32,32,32,32,32,32/
+
+! Parameters for STO basis sets
+
+data BASstosz / & ! TG
+1,1,&
+5,5,5,5,5,5,5,5,&
+9,9,9,9,9,9,9,9,&
+13,13,&
+19,19,19,19,19,19,19,19,19,19,&
+19,19,19,19,19,19/
+
+data BASstodz / & ! TG
+2,2,&
+7,7,10,10,10,10,10,10,&
+15,15,18,18,18,18,18,18,&
+29,29,&
+41,41,41,41,41,41,41,41,41,41,&
+38,38,37,38,37,37/
+
+data BASstodzp / & ! TG
+5,5,&
+13,13,16,16,16,16,16,16,&
+21,21,24,24,24,24,24,24,&
+35,35,&
+45,45,45,45,45,45,45,45,45,45,&
+44,44,43,44,43,43/
+
+data BASstotzp / & ! TG
+6,6,&
+17,17,20,20,20,20,20,20,&
+25,25,28,28,28,28,28,28,&
+39,39,&
+45,45,45,45,45,45,45,45,45,45,&
+54,54,53,54,53,53/
+
+data BASstotz2p / & ! TG
+12,12,&
+27,30,30,30,30,30,30,30,&
+35,38,38,38,38,38,38,38,&
+49,55,&
+55,55,55,55,55,55,55,55,55,55,&
+64,64,63,64,63,63/
+
+
 
 ! **************************************
 ! * load data into emiss() and nbas()  *
@@ -1295,6 +1449,42 @@ case ('hf/accdz','hf/augccpvdz') !RMS=0.2222
   case ('hf/dz')  !RMS=0.3754
      emiss(1:apar)=HFdz(1:apar)
      nbas(1:apar)=BASdz(1:apar)
+     p(1)=0.1059d0
+     p(2)=1.4554d0
+     p(3)=0.3711d0
+     p(4)=1.6342d0
+   ! TG parameter for STO basis sets
+   case ('hf/stosz')
+     emiss(1:apar)=HFstosz(1:apar)
+     nbas(1:apar)=BASstosz(1:apar)
+     p(1)=0.1059d0
+     p(2)=1.4554d0
+     p(3)=0.3711d0
+     p(4)=1.6342d0
+   case ('hf/stodz')
+     emiss(1:apar)=HFstodz(1:apar)
+     nbas(1:apar)=BASstodz(1:apar)
+     p(1)=0.1059d0
+     p(2)=1.4554d0
+     p(3)=0.3711d0
+     p(4)=1.6342d0
+   case ('hf/stodzp')
+     emiss(1:apar)=HFstodzp(1:apar)
+     nbas(1:apar)=BASstodzp(1:apar)
+     p(1)=0.1059d0
+     p(2)=1.4554d0
+     p(3)=0.3711d0
+     p(4)=1.6342d0
+   case ('hf/stotzp')
+     emiss(1:apar)=HFstotzp(1:apar)
+     nbas(1:apar)=BASstotzp(1:apar)
+     p(1)=0.1059d0
+     p(2)=1.4554d0
+     p(3)=0.3711d0
+     p(4)=1.6342d0
+   case ('hf/stotz2p')
+     emiss(1:apar)=HFstotz2p(1:apar)
+     nbas(1:apar)=BASstotz2p(1:apar)
      p(1)=0.1059d0
      p(2)=1.4554d0
      p(3)=0.3711d0
@@ -1441,6 +1631,42 @@ case ('hf/accdz','hf/augccpvdz') !RMS=0.2222
      p(2)=1.4634d0
      p(3)=0.3513d0
      p(4)=1.6880d0
+   ! TG Parameter for STO basis sets
+   case ('dft/stosz')
+     emiss(1:apar)=DFTstosz(1:apar)
+     nbas(1:apar)=BASstosz(1:apar)
+     p(1)=0.1059d0
+     p(2)=1.4554d0
+     p(3)=0.3711d0
+     p(4)=1.6342d0
+   case ('dft/stodz')
+     emiss(1:apar)=DFTstodz(1:apar)
+     nbas(1:apar)=BASstodz(1:apar)
+     p(1)=0.1059d0
+     p(2)=1.4554d0
+     p(3)=0.3711d0
+     p(4)=1.6342d0
+   case ('dft/stodzp')
+     emiss(1:apar)=DFTstodzp(1:apar)
+     nbas(1:apar)=BASstodzp(1:apar)
+     p(1)=0.1059d0
+     p(2)=1.4554d0
+     p(3)=0.3711d0
+     p(4)=1.6342d0
+   case ('dft/stotzp')
+     emiss(1:apar)=DFTstotzp(1:apar)
+     nbas(1:apar)=BASstotzp(1:apar)
+     p(1)=0.1059d0
+     p(2)=1.4554d0
+     p(3)=0.3711d0
+     p(4)=1.6342d0
+   case ('dft/stotz2p')
+     emiss(1:apar)=DFTstotz2p(1:apar)
+     nbas(1:apar)=BASstotz2p(1:apar)
+     p(1)=0.1059d0
+     p(2)=1.4554d0
+     p(3)=0.3711d0
+     p(4)=1.6342d0
 
 
 !*****************
@@ -1624,10 +1850,38 @@ case('def2mtzvpp','mtzvpp','r2scan3c')  !SG
   p(2)=1.3150d0
   p(3)=0.9410d0
   p(4)=1.4636d0
+case('stor2scan3c')  
+  emiss(1:apar)=HFmtz2p(1:apar)
+  nbas(1:apar)=BASmtz2p(1:apar)
+  p(1)=1.0000d0
+  p(2)=1.5928d0
+  p(3)=0.9428d0
+  p(4)=1.4991d0
+case('stodzp')
+  emiss(1:apar)=HFstodzp(1:apar)
+  nbas(1:apar)=BASmtz2p(1:apar)
+  p(1)=1.0000d0
+  p(2)=1.5928d0
+  p(3)=0.9428d0
+  p(4)=1.4991d0
 case default
   write(*,'(3a)')  '** ',trim(method),' **'
   error stop 'not implemented'
 end select
+
+if (custom_param%sigma) then
+   p(1) = custom_param%sigma_input
+   write(*,*) 'sigma gefunden'
+end if
+if (custom_param%eta) then
+   p(2) = custom_param%eta_input
+end if
+if (custom_param%alpha) then
+   p(3) = custom_param%alpha_input
+end if
+if (custom_param%beta) then
+   p(4) = custom_param%beta_input
+end if
 
 end
 

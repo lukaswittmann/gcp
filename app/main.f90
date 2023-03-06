@@ -18,7 +18,7 @@ program main
    use, intrinsic :: iso_fortran_env, only : output_unit, error_unit, input_unit
    use mctc_env, only : error_type, fatal_error, wp
    use mctc_io, only : structure_type, read_structure, filetype, get_filetype
-   use gcp, only : gcp_call, wregrad_tm, get_gcp_version
+   use gcp, only : gcp_call, wregrad_tm, get_gcp_version, params
    use gcp_strings, only : lowercase
    implicit none
    character(len=*), parameter :: prog_name = "mctc-gcp"
@@ -29,13 +29,19 @@ program main
    type(error_type), allocatable :: error
    real(wp) :: energy, gradlatt(3, 3), lattice(3, 3)
    real(wp), allocatable :: gradient(:, :)
+   real(wp) :: global_scaling
+   real(wp) :: alpha_input
+   real(wp) :: beta_input
+   real(wp) :: eta_input
+   real(wp) :: sigma_input
    character(len=:), allocatable :: method
    character(len=20) :: lc_method
    logical :: dograd, dohess, echo, parfile
    integer, allocatable :: ifrez(:)
+   type(params) :: custom_param
 
    call get_arguments(input, input_format, method, dograd, dohess, echo, &
-      & parfile, error)
+      & parfile, global_scaling, custom_param, error)
    if (allocated(error)) then
       write(error_unit, '(a)') error%message
       error stop
@@ -60,28 +66,25 @@ program main
       call header(output_unit)
    endif
 
-   if (.not.allocated(mol%lattice)) then
-      lattice = 0.0_wp
-   else
-      lattice = transpose(mol%lattice)
-   end if
-
-   call gcp_call(mol%nat, mol%xyz, lattice, mol%num(mol%id), &
-      & energy, gradient, gradlatt, dograd, dohess, any(mol%periodic), &
-      & lc_method, echo, parfile)
-
-   if (echo) then
-      if (dograd) then
-         call info(output_unit, energy, gradient)
+      if (.not.allocated(mol%lattice)) then
+         lattice = 0.0_wp
       else
-         call info(output_unit, energy)
+         lattice = transpose(mol%lattice)
       end if
-   end if
-
-    if (dograd) then
-       call wregrad_tm(mol%nat, mol%nat, mol%xyz, mol%num(mol%id), ifrez, &
-          & energy, gradient, echo)
-    endif
+            call gcp_call(mol%nat, mol%xyz, lattice, mol%num(mol%id), &
+         & energy, gradient, gradlatt, dograd, dohess, any(mol%periodic), &
+         & lc_method, echo, parfile, global_scaling, custom_param)
+            if (echo) then
+         if (dograd) then
+            call info(output_unit, energy, gradient)
+         else
+            call info(output_unit, energy)
+         end if
+      end if
+             if (dograd) then
+          call wregrad_tm(mol%nat, mol%nat, mol%xyz, mol%num(mol%id), ifrez, &
+             & energy, gradient, echo)
+       endif
 
 contains
 
@@ -110,9 +113,11 @@ subroutine help(unit)
       "--noprint", "Reduce printout, only print warnings", &
       "--parfile", "write gcp.param file", &
       "--version", "Print program version and exit", &
-      "--help", "Show this help message"
-
-   write(unit, '(a)')
+      "--help", "Show this help message", &
+      "--sigma", "global scaling parameter", &
+      "--eta", "eta parameter", &
+      "--alpha", "alpha parameter", &
+      "--beta", "beta parameter"
 
 end subroutine help
 
@@ -201,7 +206,7 @@ end subroutine get_argument
 
 
 subroutine get_arguments(input, input_format, method, dograd, dohess, echo, &
-      & parfile, error)
+      & parfile, global_scaling, custom_param, error)
 
    !> Input file name
    character(len=:), allocatable :: input
@@ -218,11 +223,17 @@ subroutine get_arguments(input, input_format, method, dograd, dohess, echo, &
    !> Perform hessian calculation
    logical :: dohess
 
+   !> Read in parameters
+   Type(params) :: custom_param
+
    !> Print information
    logical :: echo
 
    !> Use parameter file
    logical :: parfile
+
+   !> Get global scaling parameter
+   real(wp) :: global_scaling
 
    !> Error handling
    type(error_type), allocatable, intent(out) :: error
@@ -269,6 +280,50 @@ subroutine get_arguments(input, input_format, method, dograd, dohess, echo, &
          echo = .false.
       case("-parfile", "--parfile")
          parfile = .true.
+      case("-scal", "--scal")
+         iarg = iarg + 1
+         call get_argument(iarg, arg)
+         if (.not.allocated(arg)) then
+            call fatal_error(error, "Missing argument for global scaling")
+            exit
+         end if
+         read(arg, *) global_scaling
+      case("-alpha", "--alpha")
+         iarg = iarg + 1
+         call get_argument(iarg, arg)
+         if (.not.allocated(arg)) then
+            call fatal_error(error, "Missing argument for alpha")
+            exit
+         end if
+         read(arg, *) custom_param%alpha_input
+         custom_param%alpha = .true.
+      case("-beta", "--beta")
+         iarg = iarg + 1
+         call get_argument(iarg, arg)
+         if (.not.allocated(arg)) then
+            call fatal_error(error, "Missing argument for beta")
+            exit
+         end if
+         read(arg, *) custom_param%beta_input
+         custom_param%beta = .true.
+      case("-eta", "--eta")
+         iarg = iarg + 1
+         call get_argument(iarg, arg)
+         if (.not.allocated(arg)) then
+            call fatal_error(error, "Missing argument for eta")
+            exit
+         end if
+         read(arg, *) custom_param%eta_input
+         custom_param%eta = .true.
+      case("-sigma", "--sigma")
+         iarg = iarg + 1
+         call get_argument(iarg, arg)
+         if (.not.allocated(arg)) then
+            call fatal_error(error, "Missing argument for sigma")
+            exit
+         end if
+         read(arg, *) custom_param%sigma_input
+         custom_param%sigma = .true.
       case("-l", "-level", "--level", "-func", "--func")
          iarg = iarg + 1
          call get_argument(iarg, arg)
