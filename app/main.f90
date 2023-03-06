@@ -18,7 +18,7 @@ program main
    use, intrinsic :: iso_fortran_env, only : output_unit, error_unit, input_unit
    use mctc_env, only : error_type, fatal_error, wp
    use mctc_io, only : structure_type, read_structure, filetype, get_filetype
-   use gcp, only : gcp_call, wregrad_tm, get_gcp_version, params
+   use gcp, only : gcp_call, wregrad_tm, get_gcp_version, params, availpars
    use gcp_strings, only : lowercase
    implicit none
    character(len=*), parameter :: prog_name = "mctc-gcp"
@@ -114,6 +114,7 @@ subroutine help(unit)
       "--parfile", "write gcp.param file", &
       "--version", "Print program version and exit", &
       "--help", "Show this help message", &
+      "--parameters", "Show available parametrizations", &
       "--sigma", "global scaling parameter", &
       "--eta", "eta parameter", &
       "--alpha", "alpha parameter", &
@@ -253,6 +254,9 @@ subroutine get_arguments(input, input_format, method, dograd, dohess, echo, &
       select case(arg)
       case("-help", "--help")
          call help(output_unit)
+         stop
+      case("-parameters", "--parameters")
+         call availpars()
          stop
       case("-version", "--version")
          call version(output_unit)

@@ -1184,6 +1184,8 @@ data DFTstotz2p /&    !TG
 0.1065123,0.0529470,0.0241429,0.0189448,0.0168824,0.0082769/
 
 
+
+
 ! *********************
 ! * nr. of basis fkt  *
 ! *********************
@@ -3101,6 +3103,9 @@ end subroutine
 
 
 
+!**************
+!* print help *
+!**************
 subroutine help(h)
 implicit none
 logical h
@@ -3139,6 +3144,13 @@ print*,'      HF/cc-pVDZ     DFT/cc-pVDZ'
 print*,'      HF/aug-cc-pVDZ DFT/aug-cc-pVDZ'
 print*,'        -            DFT/SV(P/h,c)'
 print*,'        -            DFT/LANL'
+
+print*,'      HF/stoSZ       DFT/stoSZ'
+print*,'      HF/stoDZ       DFT/stoDZ'
+print*,'      HF/stoDZP      DFT/stoDZP'
+print*,'      HF/stoTZP      DFT/stoTZP'
+print*,'      HF/stoTZ2P     DFT/stoTZ2P'
+
 print*,'                                  '
 print*,' note: <method> does not need to be          '
 print*,'       capitelized                           '
@@ -3167,6 +3179,44 @@ print*,' *    ----   ****    ----    *    '
 
 call done('help',6)
 end subroutine help
+
+!******************************
+!* print available parameters *
+!******************************
+subroutine availpars()
+   implicit none
+ 
+   
+   print*,'                                  '
+   print*,' * ---- Available Parametrizations ---- *    '
+   print*,'                                   '
+   print*,' available parametrisation for <method>        '
+   print*,'      HF/MINIS       DFT/MINIS'
+   print*,'      HF/MINIX       DFT/MINIX'
+   print*,'      HF/SV          DFT/SV '
+   print*,'      HF/def2-SV(P)  DFT/def2-SV(P)'
+   print*,'      HF/def2-SVP    DFT/def2-SVP'
+   !print*,'      HF/SVP_OLD     DFT/SVP_old'
+   print*,'      HF/DZP         DFT/DZP'
+   print*,'      HF/def-TZVP    DFT/def-TZVP'
+   print*,'      HF/def2-TZVP   DFT/def2-TZVP'
+   print*,'      HF/631Gd       DFT/631Gd'
+   print*,'      HF/def2-TZVP   DFT/def2-TZVP'
+   print*,'      HF/cc-pVDZ     DFT/cc-pVDZ'
+   print*,'      HF/aug-cc-pVDZ DFT/aug-cc-pVDZ'
+   print*,'        -            DFT/SV(P/h,c)'
+   print*,'        -            DFT/LANL'
+   
+   print*,'      HF/stoSZ       DFT/stoSZ'
+   print*,'      HF/stoDZ       DFT/stoDZ'
+   print*,'      HF/stoDZP      DFT/stoDZP'
+   print*,'      HF/stoTZP      DFT/stoTZP'
+   print*,'      HF/stoTZ2P     DFT/stoTZ2P'
+   
+   print*,'                                   '
+   print*,' * ----            ****            ---- *    '
+
+   end subroutine availpars
 
 subroutine setzet(eta,etaspec,za,zb)
 !*************************
