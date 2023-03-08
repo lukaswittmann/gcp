@@ -912,16 +912,25 @@ character*(*) method
 real(8) global_scaling
 real(8) emiss(mpar),p(*)
 real(8) HFsv(apar),HFminis(apar),HF631gd(apar),HFsvp(apar),HFtz(apar),&
-     HFvmb(apar),HFminisd(apar),oldHFsvp(apar),HFpobtz(apar),HFpobdzvp(apar),&
-     HF2gcore(apar),HF2g(apar), HFdef1tzvp(apar),HFccdz(apar),HFaccdz(apar),&
-     HFdzp(apar),HFhsv(apar),HFdz(apar),HFmsvp(apar),HFdef2mtzvp(apar),HFdef2mtzvpp(apar),& !SG
-     HFmtz2p(apar),HFstosz(apar),HFstodz(apar),HFstodzp(apar),HFstotzp(apar),HFstotz2p(apar), & ! TG
-     DFTstosz(apar),DFTstodz(apar),DFTstodzp(apar),DFTstotzp(apar),DFTstotz2p(apar) ! TG
+      HFvmb(apar),HFminisd(apar),oldHFsvp(apar),HFpobtz(apar),HFpobdzvp(apar),&
+      HF2gcore(apar),HF2g(apar), HFdef1tzvp(apar),HFccdz(apar),HFaccdz(apar),&
+      HFdzp(apar),HFhsv(apar),HFdz(apar),HFmsvp(apar),HFdef2mtzvp(apar),HFdef2mtzvpp(apar),& !SG
+      HFmtz2p(apar),HFstosz(apar),HFstodz(apar),HFstodzp(apar),HFstotzp(apar),HFstotz2p(apar), & ! TG
+      DFTstosz(apar),DFTstodz(apar),DFTstodzp(apar),DFTstotzp(apar),DFTstotz2p(apar), & ! TG
+      DFTdef2msvp(apar), DFTdef2sv_p_(apar), DFTdef2svpd(apar), DFTdef2tzvp(apar), DFTmadef2msvp(apar), & 
+      DFTmadef2sv_p_(apar), DFTmadef2svp(apar), DFTmadef2tzvp(apar), DFTmadef2tzvp_f_(apar), &
+      DFTdef2mTZVP(apar), DFTdef2mTZVPP(apar)
+
 integer BASsv(apar),BASminis(apar),BAS631gd(apar),BAStz(apar),&
-     BASsvp(apar),BASvmb(apar),BASminisd(apar),oldBASsvp(apar),BASpobtz(apar),BASpobdzvp(apar),&
-     BAS2gcore(apar),BAS2g(apar),BASdef1tzvp(apar),BASccdz(apar),BASaccdz(apar),&
-     BASdzp(apar),BAShsv(apar),BASdz(apar),BASmsvp(apar),BASdef2mtzvp(apar),BASdef2mtzvpp(apar),&
-     BASmtz2p(apar),BASstosz(apar),BASstodz(apar),BASstodzp(apar),BASstotzp(apar),BASstotz2p(apar)
+      BASsvp(apar),BASvmb(apar),BASminisd(apar),oldBASsvp(apar),BASpobtz(apar),BASpobdzvp(apar),&
+      BAS2gcore(apar),BAS2g(apar),BASdef1tzvp(apar),BASccdz(apar),BASaccdz(apar),&
+      BASdzp(apar),BAShsv(apar),BASdz(apar),BASmsvp(apar),BASdef2mtzvp(apar),BASdef2mtzvpp(apar),&
+      BASmtz2p(apar),BASstosz(apar),BASstodz(apar),BASstodzp(apar),BASstotzp(apar),BASstotz2p(apar), &
+      BASdef2msvp(apar), BASdef2sv_p_(apar), BASdef2svpd(apar), BASdef2tzvp(apar), &
+      BASmadef2msvp(apar), BASmadef2sv_p_(apar), BASmadef2svp(apar), BASmadef2tzvp(apar), &
+      BASmadef2tzvp_f_(apar)
+
+
 real(8) HFlanl2(10)
 integer BASlanl2(10)
 type(params) :: custom_param
@@ -1009,7 +1018,6 @@ data HFpobtz /  & ! H-Kr, no RG
 0.523194,0.767449,0.620122,0.390227,0.237571,0.247940,0.249589,0.117864,0.325725,0.197183,&
 0.264489,0.180375,0.111262,0.147239,0.081747,0.000000/
 
-
 data HF2gcore /  & ! only HCNOF yet
 0.000539,0.000000,&
 0.000000,0.000000,0.000000,0.173663,0.269952,0.364341,0.384923,0.000000,&
@@ -1042,7 +1050,6 @@ data HFmtz2p /&    !TG
 0.018669,0.179879,0.024208,0.016573,0.024158,0.059907,0.060532,0.075696,0.015305,0.058416,&
 0.038461,0.014964,0.005114,0.007737,0.005242,0.100899/
 
-
 data HF2g / & !no ne, ar ecp
 0.0539181,0.161846,&
 0.1581960,0.214318,0.808955,0.470398,0.724457,1.260960,2.014430,0.000000,&
@@ -1058,7 +1065,6 @@ data HFccdz / &
 0.000000,0.078016,& !no k cc-pVDZ Basis
 0.036885,0.038540,0.036474,0.036061,0.030289,0.027959,0.025177,0.022709,0.027386,0.015816,&
 0.135176,0.115515,0.102761,0.102967,0.097891,0.097331/
-
 
 data HFaccdz / & !for li,be,na,mg,k-zn energy below def2-QZVPD reference
 0.001183,0.005948,&
@@ -1091,7 +1097,6 @@ data HFdz / &
 0.296046,0.370399,&
 0.349482,0.302284,0.267639,0.244306,0.232237,0.221488,0.214153,0.032694,0.226865,0.213902,&
 0.172296,0.155496,0.143646,0.149642,0.149871,0.151705/
-
 
 data HFmsvp / &     !H-Kr modified Ahlrichs DZ, supplemented by def2-SV(P)
 0.000000d0,0.000000d0,& !RG,H set to zero,  F adjusted empirically, Be corrected due to ROHF problems
@@ -1183,7 +1188,86 @@ data DFTstotz2p /&    !TG
 0.0488026,0.0487212,0.0919702,0.0369710,0.0419969,0.0374853,0.0343396,0.0343862,0.0277682,0.0332192,&
 0.1065123,0.0529470,0.0241429,0.0189448,0.0168824,0.0082769/
 
+! Emiss data for DFT with ORCA 5.0.3. ROHF
+data DFTdef2mSVP /& !WL
+0.0105882,0.0088428,&
+0.113578,0.0283702,0.0519819,0.0214034,0.0272484,0.0848161,0.057479,0.0827635,&
+0.181296,0.125578,0.2417704,0.1519059,0.1453948,0.2003961,0.1837325,0.2056676,&
+0.2025449,0.3005024,&
+0.3256815,0.3082206,0.1864427,0.0522291,0.1246608,1.0245537,0.4449178,0.6993378,0.3821477,0.3507567,&
+0.4000602,0.3494294,0.3495327,0.4039801,0.3843704,0.3997181/
 
+data DFTdef2SVPD /& !WL
+0.0012433,0.0065867,&
+0.0403514,0.0253559,0.0687068,0.0510321,0.0686189,0.1368833,0.1255277,0.1630128,&
+0.1442514,0.1137178,0.1964918,0.1317279,0.1286946,0.1421794,0.1616654,0.1855518,&
+0.0976153,0.1615412,&
+0.215117,0.2115268,0.1287467,-0.0307593,0.0952587,0.6759826,0.309184,0.5593763,0.3129903,0.2994712,&
+0.3601219,0.3205502,0.3307628,0.3433324,0.3608357,0.3815845/
+
+data DFTdef2TZVP /& !WL
+0.0075761,0.0033118,&
+0.086759,0.0099617,0.0322317,0.0077494,0.0047304,0.0500068,0.0061555,0.0075105,&
+0.0778788,0.0500234,0.1432039,0.0440955,0.0257955,0.0609011,0.0233219,0.0227335,&
+0.0988306,0.1000141,&
+0.2192736,0.1926576,0.0590811,-0.0934915,-0.0287775,0.1248193,0.1756997,0.1280994,0.1442726,0.0568755,&
+0.1453992,0.0739458,0.0635632,0.0737138,0.062647,0.0610298/
+
+data DFTmadef2mSVP /& !WL
+0.0105882,0.0084289,&
+0.0399472,0.0052027,0.0342777,0.0176923,0.0233166,0.0797283,0.0515737,0.074343,&
+0.0875165,0.0633017,0.1123708,0.1293665,0.1377159,0.1918796,0.1769229,0.1959142,&
+0.0790688,0.1591988,&
+0.2147571,0.2235832,0.1287349,-0.0272691,0.0974447,0.6844455,0.3116127,0.5593265,0.3216091,0.3006614,&
+0.2810596,0.3191371,0.3409865,0.3641373,0.3805662,0.3940763/
+
+data DFTmadef2SV_P_ /& !WL
+0.0090365,0.0062716,&
+0.0399472,0.0052027,0.0557525,0.0527451,0.0701053,0.1411349,0.1289187,0.1666808,&
+0.0875165,0.0633017,0.1123708,0.1293665,0.1377159,0.1918796,0.1769229,0.1959142,&
+0.0790688,0.1591988,&
+0.215427,0.2240109,0.1298789,-0.0272539,0.0999025,0.3278658,0.3141599,0.2968327,0.321669,0.3007419,&
+0.2810596,0.3191371,0.3409865,0.3641373,0.3805662,0.3940763/
+
+data DFTmadef2SVP /& !WL
+0.0081061,0.0062716,&
+0.0399472,0.0052027,0.0557525,0.0527451,0.0701053,0.1411349,0.1289187,0.1666808,&
+0.0875165,0.0633017,0.1123708,0.1293665,0.1377159,0.1918796,0.1769229,0.1959142,&
+0.0790688,0.1591988,&
+0.2147571,0.2235832,0.1287349,-0.0272691,0.0974447,0.6844455,0.3116127,0.5593265,0.3216091,0.3006614,&
+0.2810596,0.3191371,0.3409865,0.3641373,0.3805662,0.3940763/
+
+data DFTmadef2TZVP /& !WL
+0.0075761,0.0018813,&
+0.0865111,-0.0102167,-0.0157968,0.0051048,0.0042471,0.0493883,0.0058269,0.0069168,&
+0.0504095,-0.0162498,0.0235745,0.0219931,0.0192152,0.0226418,0.0216358,0.0199969,&
+-0.0074653,-0.0908831,&
+0.0626926,0.0640297,-0.0131788,-0.1971509,-0.11224,0.0770377,0.0534177,0.2243274,0.0737416,0.0281112,&
+0.0474847,0.0487147,0.0532333,0.0597309,0.0565707,0.0566359/
+
+data DFTmadef2TZVP_f_ /& !WL
+0.0075761,0.0018813,&
+0.0865111,-0.0102167,-0.0157964,0.0051049,0.0042472,0.0493885,0.0065169,0.0069168,&
+0.0504095,-0.0162498,0.0235917,0.0220136,0.0192166,0.0234253,0.0226944,0.019999,&
+-0.0074653,-0.0908831,&
+0.0626926,0.0640297,-0.0131788,-0.1971509,-0.11224,0.0770377,0.0534177,0.2243274,0.0737416,0.0281112,&
+0.0475151,0.0487462,0.0532545,0.0605062,0.0567056,0.0566554/
+
+data DFTdef2mTZVP /& !WL
+0.0085051,0.0041078,&
+0.1363647,0.0111619,0.0452045,0.0098871,0.0057068,0.0474103,0.0069483,0.0073827,&
+0.1351469,0.1474323,0.1603874,0.0574676,0.0346369,0.0684692,0.0284154,0.02497,&
+0.1431824,0.2088222,&
+0.223392,0.1972992,0.0631984,-0.0908821,-0.0237432,0.0902124,0.1866629,0.151173,0.1486603,0.1071798,&
+0.1662877,0.0901721,0.0774304,0.0868828,0.0709164,0.067376/
+
+data DFTdef2mTZVPP /& !WL
+0.0100002,0.0080452,&
+0.1073816,0.0111619,0.0452045,0.0098871,0.0025734,0.0474564,0.0050785,0.0061011,&
+0.1351469,0.1474323,0.1603874,0.0483157,0.0245933,0.0573558,0.023399,0.0217515,&
+0.1431824,0.2088222,&
+0.223392,0.1972992,0.0631984,-0.0908821,-0.0237432,0.0902124,0.1866629,0.151173,0.1486603,0.1071798,&
+0.1662877,0.0901721,0.0774304,0.0868828,0.0709164,0.0578201/
 
 
 ! *********************
@@ -1197,7 +1281,15 @@ data oldBASsvp/2*5,6,9,6*14,2*10,6*18,14,24,10*31,6*32/
 data BAStz/       2*6,14,19,6*31,2*32,6*37,33,36,9*45,48,6*48/
 !data BASdef2mtzvp/2*6,14,19,6*24,2*32,6*37,33,36,9*45,48,6*48/   !def2-TZVP, no f for B-Ne
 data BASdef2mtzvp/2*3,8,11,3*19,24,2*19,2*14,6*22,18,28,10*31,6*36/   !def2-mTZVP
-data BASdef2mtzvpp/2*5,9,11,2*19,4*24,2*14,6*27,18,28,10*31,6*36/  !def2-mTZVPP
+data BASdef2mtzvpp/2*5,9,11,2*19,4*24,2*14,6*27,18,28,10*31,6*36/  !def2-mTZVPP 
+!! Bug?
+!! data BASdef2mTZVPP /& !WL
+!! 5,5,&
+!! 11,11,19,19,24,24,24,24,&
+!! 14,14,22,27,27,27,27,27,&
+!! 18,28,&
+!! 33,33,33,33,33,33,33,33,33,33,&
+!! 36,36,36,36,36,41/
 data BASmtz2p/2*5,2*16,2*19,24,3*26,2*24,27,5*34,2*37,10*42,2*50,49,50,49,56/ !mTZ2P
 data BASvmb/2*1,2*2,6*4,2*1,6*4,2*0,16*0/ ! minimal basis set with ECPs
 data BASminisd/2*0,2*0,6*0,2*0,6*14,2*0,16*0/
@@ -1324,6 +1416,71 @@ data BASstotz2p / & ! TG
 55,55,55,55,55,55,55,55,55,55,&
 64,64,63,64,63,63/
 
+! TODO: add bas values
+
+data BASdef2mSVP /& !WL
+2,2,&
+9,9,15,15,15,15,15,15,&
+15,18,18,18,18,18,18,18,&
+24,24,&
+31,31,31,31,31,31,31,31,31,31,&
+32,32,32,32,32,32/
+
+data BASdef2SVPD /& !WL
+8,8,&
+12,12,20,20,20,23,23,23,&
+18,21,24,24,24,27,27,27,&
+27,27,&
+34,34,34,34,34,34,34,34,34,34,&
+38,38,38,41,41,41/
+
+data BASdef2TZVP /& !WL
+6,6,&
+14,19,31,31,31,31,31,31,&
+32,32,37,37,37,37,37,37,&
+33,36,&
+45,45,45,45,45,45,45,45,45,48,&
+48,48,48,48,48,48/
+
+data BASmadef2mSVP /& !WL
+2,3,&
+13,13,19,19,19,19,19,19,&
+19,22,22,22,22,22,22,22,&
+28,28,&
+35,35,35,35,35,35,35,35,35,35,&
+36,36,36,36,36,36/
+
+data BASmadef2SV_P_ /& !WL
+2,9,&
+13,13,18,18,18,18,18,18,&
+19,22,22,22,22,22,22,22,&
+28,28,&
+28,28,28,28,28,28,28,28,28,28,&
+36,36,36,36,36,36/
+
+data BASmadef2SVP /& !WL
+5,9,&
+13,13,18,18,18,18,18,18,&
+19,22,22,22,22,22,22,22,&
+28,28,&
+35,35,35,35,35,35,35,35,35,35,&
+36,36,36,36,36,36/
+
+data BASmadef2TZVP /& !WL
+6,10,&
+18,23,35,35,35,35,35,35,&
+36,36,41,41,41,41,41,41,&
+37,40,&
+49,49,49,49,49,49,49,49,49,52,&
+52,52,52,52,52,52/
+
+data BASmadef2TZVP_f_ /& !WL
+6,10,&
+18,23,28,28,28,28,28,28,&
+36,36,34,34,34,34,34,34,&
+37,40,&
+49,49,49,49,49,49,49,49,49,52,&
+45,45,45,45,45,45/
 
 
 ! **************************************
@@ -1591,7 +1748,9 @@ case ('hf/accdz','hf/augccpvdz') !RMS=0.2222
     p(2)=0.9722d0
     p(3)=1.1961d0
     p(4)=1.1456d0
-  case ('dft/tz','b3lyp/tz', 'dft/def2tzvp', 'b3lyp/def2tzvp') ! RMS=0.19648
+
+  case ('dft/tz','b3lyp/tz', 'b3lyp/def2tzvp') ! RMS=0.19648  
+   !! removed 'dft/def2tzvp' from here !!
      emiss(1:apar)=HFtz(1:apar)
      nbas(1:apar)=BAStz(1:apar)
      p(1)=0.2905d0
@@ -1669,6 +1828,83 @@ case ('hf/accdz','hf/augccpvdz') !RMS=0.2222
      p(2)=1.4554d0
      p(3)=0.3711d0
      p(4)=1.6342d0
+
+   ! TODO: add cases for other basis sets, from fittet parameters
+
+
+   !* def2mSVP, def2SVPD, def2TZVP, madef2mSVP, madef2SVP, madef2SV(P), madef2TZVP, madef2TZVP(f)
+   case ('dft/def2msvp')
+      emiss(1:apar)=DFTdef2msvp(1:apar)
+      nbas(1:apar)=BASdef2msvp(1:apar)
+      p(1)=0.3405d0
+      p(2)=1.6127d0
+      p(3)=0.8589d0
+      p(4)=1.2830d0
+   case ('dft/def2svpd')
+      emiss(1:apar)=DFTdef2svpd(1:apar)
+      nbas(1:apar)=BASdef2svpd(1:apar)
+      p(1)=0.3405d0
+      p(2)=1.6127d0
+      p(3)=0.8589d0
+      p(4)=1.2830d0
+   case ('dft/def2tzvp')
+      emiss(1:apar)=DFTdef2tzvp(1:apar)
+      nbas(1:apar)=BASdef2tzvp(1:apar)
+      p(1)=0.3405d0
+      p(2)=1.6127d0
+      p(3)=0.8589d0
+      p(4)=1.2830d0
+   case ('dft/madef2msvp')
+      emiss(1:apar)=DFTmadef2msvp(1:apar)
+      nbas(1:apar)=BASmadef2msvp(1:apar)
+      p(1)=0.3405d0
+      p(2)=1.6127d0
+      p(3)=0.8589d0
+      p(4)=1.2830d0
+   case ('dft/madef2svp')
+      emiss(1:apar)=DFTmadef2svp(1:apar)
+      nbas(1:apar)=BASmadef2svp(1:apar)
+      p(1)=0.3405d0
+      p(2)=1.6127d0
+      p(3)=0.8589d0
+      p(4)=1.2830d0
+   case ('dft/madef2sv_p_')
+      emiss(1:apar)=DFTmadef2sv_p_(1:apar)
+      nbas(1:apar)=BASmadef2sv_p_(1:apar)
+      p(1)=0.3405d0
+      p(2)=1.6127d0
+      p(3)=0.8589d0
+      p(4)=1.2830d0
+   case ('dft/madef2tzvp')
+      emiss(1:apar)=DFTmadef2tzvp(1:apar)
+      nbas(1:apar)=BASmadef2tzvp(1:apar)
+      p(1)=0.3405d0
+      p(2)=1.6127d0
+      p(3)=0.8589d0
+      p(4)=1.2830d0
+   case ('dft/madef2tzvp_f_')
+      emiss(1:apar)=DFTmadef2tzvp_f_(1:apar)
+      nbas(1:apar)=BASmadef2tzvp_f_(1:apar)
+      p(1)=0.3405d0
+      p(2)=1.6127d0
+      p(3)=0.8589d0
+      p(4)=1.2830d0
+   case ('dft/def2mtzvp')
+      emiss(1:apar)=DFTdef2mtzvp(1:apar)
+      nbas(1:apar)=BASdef2mtzvp(1:apar)
+      p(1)=0.3405d0
+      p(2)=1.6127d0
+      p(3)=0.8589d0
+      p(4)=1.2830d0
+   case ('dft/def2mtzvpp')
+      emiss(1:apar)=DFTdef2mtzvpp(1:apar)
+      nbas(1:apar)=BASdef2mtzvpp(1:apar)
+      p(1)=0.3405d0
+      p(2)=1.6127d0
+      p(3)=0.8589d0
+      p(4)=1.2830d0
+
+
 
 
 !*****************
@@ -3103,82 +3339,82 @@ end subroutine
 
 
 
-!**************
-!* print help *
-!**************
-subroutine help(h)
-implicit none
-logical h
+! !**************
+! !* print help *
+! !**************
+! subroutine help(h)
+! implicit none
+! logical h
 
-if(.not.h) return
+! if(.not.h) return
 
-print*,'                                  '
-print*,' *    ----   HELP    ----    *    '
-print*,'                                   '
-print*,' gcp <coordinates> -level <method>   '
-print*,'                                   '
-print*,' example:                                 '
-print*,' -> gcp water.xyz -level dft/631gd     '
-print*,' -> gcp POSCAR -pbc -level hf/svp '
-print*,'                                  '
-print*,'                                  '
-print*,' Valid input coordinates are      '
-print*,'   - TURBOMOLE files (in bohr)    '
-print*,'   - XMOL files (in angstrom)     '
-print*,'   - VASP POSCAR files (in angstrom)'
-print*,'   - CRYSTAL STRUC.INCOOR files (in bohr)'
-print*,'                                  '
-print*,' available parametrisation for <method>        '
-print*,'      HF/MINIS       DFT/MINIS'
-print*,'      HF/MINIX       DFT/MINIX'
-print*,'      HF/SV          DFT/SV '
-print*,'      HF/def2-SV(P)  DFT/def2-SV(P)'
-print*,'      HF/def2-SVP    DFT/def2-SVP'
-!print*,'      HF/SVP_OLD     DFT/SVP_old'
-print*,'      HF/DZP         DFT/DZP'
-print*,'      HF/def-TZVP    DFT/def-TZVP'
-print*,'      HF/def2-TZVP   DFT/def2-TZVP'
-print*,'      HF/631Gd       DFT/631Gd'
-print*,'      HF/def2-TZVP   DFT/def2-TZVP'
-print*,'      HF/cc-pVDZ     DFT/cc-pVDZ'
-print*,'      HF/aug-cc-pVDZ DFT/aug-cc-pVDZ'
-print*,'        -            DFT/SV(P/h,c)'
-print*,'        -            DFT/LANL'
+! print*,'                                  '
+! print*,' *    ----   HELP    ----    *    '
+! print*,'                                   '
+! print*,' gcp <coordinates> -level <method>   '
+! print*,'                                   '
+! print*,' example:                                 '
+! print*,' -> gcp water.xyz -level dft/631gd     '
+! print*,' -> gcp POSCAR -pbc -level hf/svp '
+! print*,'                                  '
+! print*,'                                  '
+! print*,' Valid input coordinates are      '
+! print*,'   - TURBOMOLE files (in bohr)    '
+! print*,'   - XMOL files (in angstrom)     '
+! print*,'   - VASP POSCAR files (in angstrom)'
+! print*,'   - CRYSTAL STRUC.INCOOR files (in bohr)'
+! print*,'                                  '
+! print*,' available parametrisation for <method>        '
+! print*,'      HF/MINIS       DFT/MINIS'
+! print*,'      HF/MINIX       DFT/MINIX'
+! print*,'      HF/SV          DFT/SV '
+! print*,'      HF/def2-SV(P)  DFT/def2-SV(P)'
+! print*,'      HF/def2-SVP    DFT/def2-SVP'
+! !print*,'      HF/SVP_OLD     DFT/SVP_old'
+! print*,'      HF/DZP         DFT/DZP'
+! print*,'      HF/def-TZVP    DFT/def-TZVP'
+! print*,'      HF/def2-TZVP   DFT/def2-TZVP'
+! print*,'      HF/631Gd       DFT/631Gd'
+! print*,'      HF/def2-TZVP   DFT/def2-TZVP'
+! print*,'      HF/cc-pVDZ     DFT/cc-pVDZ'
+! print*,'      HF/aug-cc-pVDZ DFT/aug-cc-pVDZ'
+! print*,'        -            DFT/SV(P/h,c)'
+! print*,'        -            DFT/LANL'
 
-print*,'      HF/stoSZ       DFT/stoSZ'
-print*,'      HF/stoDZ       DFT/stoDZ'
-print*,'      HF/stoDZP      DFT/stoDZP'
-print*,'      HF/stoTZP      DFT/stoTZP'
-print*,'      HF/stoTZ2P     DFT/stoTZ2P'
+! print*,'      HF/stoSZ       DFT/stoSZ'
+! print*,'      HF/stoDZ       DFT/stoDZ'
+! print*,'      HF/stoDZP      DFT/stoDZP'
+! print*,'      HF/stoTZP      DFT/stoTZP'
+! print*,'      HF/stoTZ2P     DFT/stoTZ2P'
 
-print*,'                                  '
-print*,' note: <method> does not need to be          '
-print*,'       capitelized                           '
-print*,'                                  '
-print*,' command line options:            '
-print*,'    -h                       this print out   '
-print*,'    -pbc                     use periodic version   '
-print*,'    -level <string>    specify <method>   '
-print*,'      if <method> = file or left empty a parameter   '
-print*,'      file from ~/.gcppar.$HOSTNAME will be read in    '
-print*,'    -l                       same as -level   '
-print*,'    -grad                    request gradient '
-print*,'    -stress                  request cell gradient '
-print*,'    -noprint                 surpress output   '
-print*,'    -parfile                 print <gcp.param> '
-print*,'    -local                   use  .gcppar in work-dir '
-print*,'    -hess                    request hessian  '
-print*,'    -test                    stop after parameter setup  '
-print*,'    -v                       verbose output: print gradient to stdout  '
-print*,'                             instead of gcp_gradient     '
-print*,'    -vasp                    define input as VASP POSCAR file '
-print*,'    -crystal                 define input as CRYSTAL STRUC.INCOOR file '
-print*,'                                  '
-print*,'                                  '
-print*,' *    ----   ****    ----    *    '
+! print*,'                                  '
+! print*,' note: <method> does not need to be          '
+! print*,'       capitelized                           '
+! print*,'                                  '
+! print*,' command line options:            '
+! print*,'    -h                       this print out   '
+! print*,'    -pbc                     use periodic version   '
+! print*,'    -level <string>    specify <method>   '
+! print*,'      if <method> = file or left empty a parameter   '
+! print*,'      file from ~/.gcppar.$HOSTNAME will be read in    '
+! print*,'    -l                       same as -level   '
+! print*,'    -grad                    request gradient '
+! print*,'    -stress                  request cell gradient '
+! print*,'    -noprint                 surpress output   '
+! print*,'    -parfile                 print <gcp.param> '
+! print*,'    -local                   use  .gcppar in work-dir '
+! print*,'    -hess                    request hessian  '
+! print*,'    -test                    stop after parameter setup  '
+! print*,'    -v                       verbose output: print gradient to stdout  '
+! print*,'                             instead of gcp_gradient     '
+! print*,'    -vasp                    define input as VASP POSCAR file '
+! print*,'    -crystal                 define input as CRYSTAL STRUC.INCOOR file '
+! print*,'                                  '
+! print*,'                                  '
+! print*,' *    ----   ****    ----    *    '
 
-call done('help',6)
-end subroutine help
+! call done('help',6)
+! end subroutine help
 
 !******************************
 !* print available parameters *
@@ -3216,12 +3452,13 @@ subroutine availpars()
    print*,'                                   '
    print*,' * ----            ****            ---- *    '
 
-   end subroutine availpars
+end subroutine availpars
 
-subroutine setzet(eta,etaspec,za,zb)
+
 !*************************
 !* set slater exponents  *
 !*************************
+subroutine setzet(eta,etaspec,za,zb)
 implicit none
 integer i
 real(8) za(36),zb(36)

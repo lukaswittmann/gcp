@@ -34,3 +34,10 @@
 # Directories
 /build*/
 /_*/
+
+# Files
+.CPC
+.CP
+
+# Parameterization
+/parameterization
