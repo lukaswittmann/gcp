@@ -1,0 +1,32 @@
+Changelog Version v2.4.0
+
+**  Added new Bases:
+        Slater type bases: usable with HF and DFT
+            SZ
+            DZ
+            DZP
+            TZP
+            TZ2P
+        Gaussian type bases: usable with DFT
+            def2-mSVP
+            def2-SV(P)
+            def2-SVPD
+            def2-TZVP
+            ma-def2-mSVP
+            ma-def2-SV(P)
+            ma-def2-SVP
+            ma-def2-TZVP
+            ma-def2-TZVP(-f)
+            def2-mTZVP
+            def2-mTZVPP
+
+**  Fixed NBas for def2-mTZVPP (BASdef2mtzvpp)
+
+**  Removed DFTdef2tzvp from 
+    ```case ('dft/tz','b3lyp/tz', 'b3lyp/def2tzvp')```
+    due to more specific parameterization
+
+**  Fixed meson.build file by removing unnecessary subdir
+    ```subdir('old')```
+
+**  Added --parameters to show available parameterizations

@@ -56,7 +56,7 @@ gcp_dep = declare_dependency(
 
 # Add applications
 subdir('app')
-subdir('old')
+#subdir('old')
 
 # Package the license files
 gcp_lic = files(

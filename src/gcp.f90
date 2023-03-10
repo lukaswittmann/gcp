@@ -1748,8 +1748,7 @@ case ('hf/accdz','hf/augccpvdz') !RMS=0.2222
     p(3)=1.1961d0
     p(4)=1.1456d0
 
-  case ('dft/tz','b3lyp/tz', 'b3lyp/def2tzvp') ! RMS=0.19648  
-   !! removed 'dft/def2tzvp' from here !!
+  case ('dft/tz','b3lyp/tz', 'b3lyp/def2tzvp', 'dft/def2tzvp') ! RMS=0.19648  
      emiss(1:apar)=HFtz(1:apar)
      nbas(1:apar)=BAStz(1:apar)
      p(1)=0.2905d0
@@ -1791,119 +1790,159 @@ case ('hf/accdz','hf/augccpvdz') !RMS=0.2222
      p(2)=1.4634d0
      p(3)=0.3513d0
      p(4)=1.6880d0
-   ! TG Parameter for STO basis sets
+   !* TG Parameter for STO basis sets
    case ('dft/stosz')
-     emiss(1:apar)=DFTstosz(1:apar)
-     nbas(1:apar)=BASstosz(1:apar)
-     p(1)=0.1059d0
-     p(2)=1.4554d0
-     p(3)=0.3711d0
-     p(4)=1.6342d0
+      emiss(1:apar)=DFTstosz(1:apar)
+      nbas(1:apar)=BASstosz(1:apar)
+      !1.063390	-2.573552	0.123695	4.265908
+
+
+      p(1)=1.063390d0
+      p(2)=-2.573552d0
+      p(3)=0.123695d0
+      p(4)=4.265908d0
+
    case ('dft/stodz')
-     emiss(1:apar)=DFTstodz(1:apar)
-     nbas(1:apar)=BASstodz(1:apar)
-     p(1)=0.1059d0
-     p(2)=1.4554d0
-     p(3)=0.3711d0
-     p(4)=1.6342d0
+      emiss(1:apar)=DFTstodz(1:apar)
+      nbas(1:apar)=BASstodz(1:apar)
+      !0.335429	1.606817	0.959081	1.165383
+
+      p(1)=0.335429d0
+      p(2)=1.606817d0
+      p(3)=0.959081d0
+      p(4)=1.165383d0
+
    case ('dft/stodzp')
-     emiss(1:apar)=DFTstodzp(1:apar)
-     nbas(1:apar)=BASstodzp(1:apar)
-     p(1)=0.1059d0
-     p(2)=1.4554d0
-     p(3)=0.3711d0
-     p(4)=1.6342d0
+      emiss(1:apar)=DFTstodzp(1:apar)
+      nbas(1:apar)=BASstodzp(1:apar)
+      !0.503379	1.369546	0.710364	1.242508
+
+      p(1)=0.503379d0
+      p(2)=1.369546d0
+      p(3)=0.710364d0
+      p(4)=1.242508d0
+
    case ('dft/stotzp')
-     emiss(1:apar)=DFTstotzp(1:apar)
-     nbas(1:apar)=BASstotzp(1:apar)
-     p(1)=0.1059d0
-     p(2)=1.4554d0
-     p(3)=0.3711d0
-     p(4)=1.6342d0
+      emiss(1:apar)=DFTstotzp(1:apar)
+      nbas(1:apar)=BASstotzp(1:apar)
+      !0.350620	1.646050	0.866714	1.277262
+
+      p(1)=0.350620d0
+      p(2)=1.646050d0
+      p(3)=0.866714d0
+      p(4)=1.277262d0
+
    case ('dft/stotz2p')
-     emiss(1:apar)=DFTstotz2p(1:apar)
-     nbas(1:apar)=BASstotz2p(1:apar)
-     p(1)=0.1059d0
-     p(2)=1.4554d0
-     p(3)=0.3711d0
-     p(4)=1.6342d0
+      emiss(1:apar)=DFTstotz2p(1:apar)
+      nbas(1:apar)=BASstotz2p(1:apar)
+      !0.344044	1.662838	0.864782	1.268775
 
-   ! TODO: add cases for other basis sets, from fittet parameters
-
+      p(1)=0.344044d0
+      p(2)=1.662838d0
+      p(3)=0.864782d0
+      p(4)=1.268775d0
 
    !* def2mSVP, def2SVPD, def2TZVP, madef2mSVP, madef2SVP, madef2SV(P), madef2TZVP, madef2TZVP(f)
    case ('dft/def2msvp')
       emiss(1:apar)=DFTdef2msvp(1:apar)
       nbas(1:apar)=BASdef2msvp(1:apar)
-      p(1)=0.3405d0
-      p(2)=1.6127d0
-      p(3)=0.8589d0
-      p(4)=1.2830d0
+      !0.389155	1.274133	0.982180	1.163683
+
+      p(1)=0.389155d0
+      p(2)=1.274133d0
+      p(3)=0.982180d0
+      p(4)=1.163683d0
+
    case ('dft/def2svpd')
       emiss(1:apar)=DFTdef2svpd(1:apar)
       nbas(1:apar)=BASdef2svpd(1:apar)
-      p(1)=0.3405d0
-      p(2)=1.6127d0
-      p(3)=0.8589d0
-      p(4)=1.2830d0
-   case ('dft/def2tzvp')
-      emiss(1:apar)=DFTdef2tzvp(1:apar)
-      nbas(1:apar)=BASdef2tzvp(1:apar)
-      p(1)=0.3405d0
-      p(2)=1.6127d0
-      p(3)=0.8589d0
-      p(4)=1.2830d0
+      !0.064011	-0.007411	0.802308	0.781507
+
+      p(1)=0.064011d0
+      p(2)=-0.007411d0
+      p(3)=0.802308d0
+      p(4)=0.781507d0
+
+   ! case ('dft/def2tzvp')
+   !    emiss(1:apar)=DFTdef2tzvp(1:apar)
+   !    nbas(1:apar)=BASdef2tzvp(1:apar)
+   !    !0.207439	1.109704	1.140976	1.027217
+
+   !    p(1)=0.207439d0
+   !    p(2)=1.109704d0
+   !    p(3)=1.140976d0
+   !    p(4)=1.027217d0
+
    case ('dft/madef2msvp')
       emiss(1:apar)=DFTmadef2msvp(1:apar)
       nbas(1:apar)=BASmadef2msvp(1:apar)
-      p(1)=0.3405d0
-      p(2)=1.6127d0
-      p(3)=0.8589d0
-      p(4)=1.2830d0
+      !0.375020	1.111036	1.618724	0.903352
+
+      p(1)=0.375020d0
+      p(2)=1.111036d0
+      p(3)=1.618724d0
+      p(4)=0.903352d0
+
    case ('dft/madef2svp')
       emiss(1:apar)=DFTmadef2svp(1:apar)
       nbas(1:apar)=BASmadef2svp(1:apar)
-      p(1)=0.3405d0
-      p(2)=1.6127d0
-      p(3)=0.8589d0
-      p(4)=1.2830d0
+      !0.618521	-0.003618	2.216497	0.581570
+
+      p(1)=0.618521d0
+      p(2)=-0.003618d0
+      p(3)=2.216497d0
+      p(4)=0.581570d0
+
    case ('dft/madef2sv_p_')
       emiss(1:apar)=DFTmadef2sv_p_(1:apar)
       nbas(1:apar)=BASmadef2sv_p_(1:apar)
-      p(1)=0.3405d0
-      p(2)=1.6127d0
-      p(3)=0.8589d0
-      p(4)=1.2830d0
-   case ('dft/madef2tzvp')
-      emiss(1:apar)=DFTmadef2tzvp(1:apar)
-      nbas(1:apar)=BASmadef2tzvp(1:apar)
-      p(1)=0.3405d0
-      p(2)=1.6127d0
-      p(3)=0.8589d0
-      p(4)=1.2830d0
+      !0.432643	0.828741	1.648752	0.853791
+
+      p(1)=0.432643d0
+      p(2)=0.828741d0
+      p(3)=1.648752d0
+      p(4)=0.853791d0
+
+
    case ('dft/madef2tzvp_f_')
       emiss(1:apar)=DFTmadef2tzvp_f_(1:apar)
       nbas(1:apar)=BASmadef2tzvp_f_(1:apar)
-      p(1)=0.3405d0
-      p(2)=1.6127d0
-      p(3)=0.8589d0
-      p(4)=1.2830d0
+      !0.211641	-0.020032	1.686602	0.630170
+
+      p(1)=0.211641d0
+      p(2)=-0.020032d0
+      p(3)=1.686602d0
+      p(4)=0.630170d0
+
+   case ('dft/madef2tzvp')
+      emiss(1:apar)=DFTmadef2tzvp(1:apar)
+      nbas(1:apar)=BASmadef2tzvp(1:apar)
+      !0.344719	-0.027825	1.986118	0.592226
+      
+      p(1)=0.344719d0
+      p(2)=-0.027825d0
+      p(3)=1.986118d0
+      p(4)=0.592226d0
+
    case ('dft/def2mtzvp')
       emiss(1:apar)=DFTdef2mtzvp(1:apar)
       nbas(1:apar)=BASdef2mtzvp(1:apar)
-      p(1)=0.3405d0
-      p(2)=1.6127d0
-      p(3)=0.8589d0
-      p(4)=1.2830d0
+      !0.172919	1.458811	1.196440	1.084468
+
+      p(1)=0.172919d0
+      p(2)=1.458811d0
+      p(3)=1.196440d0
+      p(4)=1.084468d0
+
    case ('dft/def2mtzvpp')
       emiss(1:apar)=DFTdef2mtzvpp(1:apar)
       nbas(1:apar)=BASdef2mtzvpp(1:apar)
-      p(1)=0.3405d0
-      p(2)=1.6127d0
-      p(3)=0.8589d0
-      p(4)=1.2830d0
+      !0.165873	1.166529	1.128320	1.030426
 
-
+      p(1)=0.165873d0
+      p(2)=1.166529d0
+      p(3)=1.128320d0
+      p(4)=1.030426d0
 
 
 !*****************

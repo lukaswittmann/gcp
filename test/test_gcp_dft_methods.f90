@@ -172,7 +172,6 @@ subroutine test_dft_dzp(error)
 
 end subroutine test_dft_dzp
 
-
 subroutine test_dft_deftzvp(error)
 
    !> Error handling
@@ -185,7 +184,7 @@ subroutine test_dft_deftzvp(error)
 
 end subroutine test_dft_deftzvp
 
-
+! TODO: Fix refernece value for def2-tzvp
 subroutine test_dft_def2tzvp(error)
 
    !> Error handling
